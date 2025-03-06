@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -100,6 +100,7 @@
         }
 
         #result {
+            margin-left: 1.5rem;
             margin-top: 1.5rem;
             padding: 1rem;
             background: #f8f9fa;
@@ -125,6 +126,18 @@
             font-size: 0.8rem;
             margin-top: 0.3rem;
             display: none;
+        }
+
+        .result{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 1.5rem;
+            background: #e9f0f7;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--text-color);
         }
 
         @media (max-width: 600px) {
@@ -172,6 +185,7 @@
                 <option value="Fuel Type_N">Natural Gas</option>
                 <option value="Fuel Type_X">Regular Gasoline</option>
                 <option value="Fuel Type_Z">Premium Gasoline</option>
+                <option value="Fuel Type_D">Diesel</option>
             </select>
         </div>
         
@@ -182,9 +196,12 @@
         </div>
         
         <button onclick="predictCO2()">Predict CO2 Emission</button>
-        
-        <div id="result">Predicted CO2 Emission: --</div>
+    
+    </div>
+    <div class="result">
+    <div id="result">Predicted CO2 Emission: --</div>
         <p id="carDetails"></p>
+        <p id="assessment"></p>
     </div>
     
     <script>
@@ -221,7 +238,6 @@
             const gears = parseInt(document.getElementById('gears').value);
 
             const data = { engine_size: engineSize, fuel_consumption: fuelConsumption, fuel_type: fuelType, gears: gears };
-            
             // Show loading state
             const button = document.querySelector('button');
             const originalText = button.innerText;
@@ -237,6 +253,7 @@
             .then(result => {
                 document.getElementById('result').innerText = `Predicted CO2 Emission: ${result.co2_emission}`;
                 document.getElementById('carDetails').innerText = `${carName} ${model}`;
+                document.getElementById('assessment').innerText = `${result.assessment}`;
             })
             .catch(error => {
                 console.error('Error:', error);
