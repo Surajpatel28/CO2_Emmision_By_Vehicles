@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO2 Emission Predictor</title>
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --primary-dark: #27ae60;
+            --text-color: #2c3e50;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --error-color: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        #carDetails {
+            margin-top: 1rem;
+            text-align: center;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .input-error {
+            border-color: var(--error-color) !important;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>CO2 Emission Predictor</h2>
+        
+        <div class="form-group">
+            <label for="carName">Car Name</label>
+            <input type="text" id="carName" placeholder="e.g., Toyota Camry">
+            <div class="error-message">Please enter a car name</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="model">Model</label>
+            <input type="text" id="model" placeholder="e.g., 2023 SE">
+            <div class="error-message">Please enter a model</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="engineSize">Engine Size (L)</label>
+            <input type="number" id="engineSize" step="0.1" placeholder="e.g., 2.5" required>
+            <div class="error-message">Please enter a valid engine size</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="fuelConsumption">Fuel Consumption (L/100 km)</label>
+            <input type="number" id="fuelConsumption" step="0.1" placeholder="e.g., 8.5" required>
+            <div class="error-message">Please enter fuel consumption</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="fuelType">Fuel Type</label>
+            <select id="fuelType">
+                <option value="Fuel Type_N">Natural Gas</option>
+                <option value="Fuel Type_X">Regular Gasoline</option>
+                <option value="Fuel Type_Z">Premium Gasoline</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="gears">Number of Gears</label>
+            <input type="number" id="gears" placeholder="e.g., 6" required>
+            <div class="error-message">Please enter number of gears</div>
+        </div>
+        
+        <button onclick="predictCO2()">Predict CO2 Emission</button>
+        
+        <div id="result">Predicted CO2 Emission: --</div>
+        <p id="carDetails"></p>
+    </div>
+    
+    <script>
+        function validateInputs() {
+            let isValid = true;
+            const inputs = ['carName', 'model', 'engineSize', 'fuelConsumption', 'gears'];
+            
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                const value = element.value.trim();
+                const errorMessage = element.nextElementSibling;
+                
+                if (!value) {
+                    element.classList.add('input-error');
+                    errorMessage.style.display = 'block';
+                    isValid = false;
+                } else {
+                    element.classList.remove('input-error');
+                    errorMessage.style.display = 'none';
+                }
+            });
+            
+            return isValid;
+        }
+
+        function predictCO2() {
+            if (!validateInputs()) return;
+
+            const carName = document.getElementById('carName').value;
+            const model = document.getElementById('model').value;
+            const engineSize = parseFloat(document.getElementById('engineSize').value);
+            const fuelConsumption = parseFloat(document.getElementById('fuelConsumption').value);
+            const fuelType = document.getElementById('fuelType').value;
+            const gears = parseInt(document.getElementById('gears').value);
+
+            const data = { engine_size: engineSize, fuel_consumption: fuelConsumption, fuel_type: fuelType, gears: gears };
+            
+            // Show loading state
+            const button = document.querySelector('button');
+            const originalText = button.innerText;
+            button.innerText = 'Calculating...';
+            button.disabled = true;
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('result').innerText = `Predicted CO2 Emission: ${result.co2_emission}`;
+                document.getElementById('carDetails').innerText = `${carName} ${model}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'An error occurred. Please try again.';
+            })
+            .finally(() => {
+                button.innerText = originalText;
+                button.disabled = false;
+            });
+        }
+
+        // Add input validation on blur
+        ['carName', 'model', 'engineSize', 'fuelConsumption', 'gears'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', function() {
+                const errorMessage = this.nextElementSibling;
+                if (!this.value.trim()) {
+                    this.classList.add('input-error');
+                    errorMessage.style.display = 'block';
+                } else {
+                    this.classList.remove('input-error');
+                    errorMessage.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
