@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-model = joblib.load("linear_model.pkl"))
-scaler = joblib.load("scaler.pkl"))
-power_transformer = joblib.load("power_transformer.pkl"))
+model = joblib.load("linear_model.pkl")
+scaler = joblib.load("scaler.pkl")
+power_transformer = joblib.load("power_transformer.pkl")
 
 # List of columns used during model training
 model_cols = joblib.load("model_columns.pkl")  # This is a list of column names in the correct order
