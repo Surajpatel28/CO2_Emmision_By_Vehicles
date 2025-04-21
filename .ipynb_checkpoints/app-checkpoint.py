@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import os
 
-# Load your trained model and transformers
-model = joblib.load("linear_model.pkl")
-scaler = joblib.load("scaler.pkl")
-power_transformer = joblib.load("power_transformer.pkl")
+
+model = joblib.load(os.path.join(os.getcwd(), "linear_model.pkl"))
+scaler = joblib.load(os.path.join(os.getcwd(), "scaler.pkl"))
+power_transformer = joblib.load(os.path.join(os.getcwd(), "power_transformer.pkl"))
 
 # List of columns used during model training
 model_cols = joblib.load("model_columns.pkl")  # This is a list of column names in the correct order
